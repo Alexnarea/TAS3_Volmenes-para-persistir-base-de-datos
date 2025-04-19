@@ -72,7 +72,7 @@ Figura 8-2 Creacion de la base de datos con el nombre test.
 
 <img src="./volumenes/pa2.PNG" alt="drawing0" width="500"/>
 
-3.En la base de datos test, crear una tabla llamada customer con los campos: id, fullname y status.
+3. En la base de datos test, crear una tabla llamada customer con los campos: id, fullname y status.
 4. Insertar al menos un registro en la tabla customer.
 
 Figura 8-3 Creacion de la tabla customer con sus campos.
