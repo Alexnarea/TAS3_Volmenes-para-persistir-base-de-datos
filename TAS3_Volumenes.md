@@ -6,23 +6,30 @@ Persistencia de Base de Datos con Docker y Volumenes en PostgesSQL
 El tiempo fue de 160 minutos. 
 ## 3. Fundamentos:
 
-## Contenedor Docker 
+## Volumenes Docker 
 
-Un contenedor de Docker es un entorno de ejecución que tiene todos los componentes necesarios (como el código, las dependencias y las bibliotecas) para ejecutar el código de la aplicación sin utilizar las dependencias de la máquina host. Este tiempo de ejecución del contenedor se ejecuta en el motor de un servidor, una máquina o una instancia en la nube. El motor ejecuta varios contenedores en función de los recursos subyacentes disponibles(Imagen de Docker y Contenedor: Diferencia Entre Tecnologías de Implementación de Aplicaciones - AWS, n.d.). 
+Los volúmenes son almacenes de datos persistentes para contenedores, creados y administrados por Docker. Puedes crear un volumen específicamente con el docker volume createcomando, o Docker puede crearlo durante la creación del contenedor o servicio. Al crear un volumen, este se almacena en un directorio del host de Docker. Al montarlo en un contenedor, este directorio es el que se monta en el contenedor. Esto es similar al funcionamiento de los montajes de enlace, salvo que Docker administra los volúmenes y los pasillos de la funcionalidad principal del host (Volúmenes | Documentación de Docker, n.d.).
+
+## Cuando utilizar volumenes
+
+Los volúmenes son el mecanismo preferido para la persistencia de los datos generados y utilizados por los contenedores Docker. Si bien los montajes de enlace dependen de la estructura de directorios y del sistema operativo del equipo host, Docker gestiona completamente los volúmenes. Los siguientes volúmenes son una buena opción para los casos de uso:
+
+- Es más fácil realizar copias de seguridad o migrar volúmenes que montajes enlazados.
+- Puede administrar volúmenes mediante los comandos CLI de Docker o la API de Docker.
+- Los volúmenes funcionan tanto en contenedores Linux como Windows.
+- Los volúmenes se pueden compartir de forma más segura entre varios contenedores.
+- Los nuevos volúmenes pueden tener su contenido rellenado previamente por un contenedor o una compilación.
+- Cuando su aplicación requiere E/S de alto rendimiento.
 
 
-- Estándar: Docker creó el estándar de la industria para contenedores, para que pudieran ser portátiles en cualquier lugar
-- Ligero: los contenedores comparten el núcleo del sistema operativo de la máquina y, por lo tanto, no requieren un sistema operativo por aplicación, lo que impulsa una mayor eficiencia del servidor y reduce los costos de servidor y licencias.
-- Seguro: las aplicaciones son más seguras en contenedores y Docker proporciona las capacidades de aislamiento predeterminadas más sólidas de la industria.
+<img src="./volumenes/volumen.png" alt="drawing0" width="500"/>
 
-<img src="./docker-img/contenedor.png" alt="drawing0" width="500"/>
+## Postgres
 
-## Imagen Docker 
-
-Una imagen de Docker, o una imagen de contenedor, es un archivo ejecutable e independiente que se utiliza para crear un contenedor. Esta imagen de contenedor contiene las bibliotecas, las dependencias y los archivos que el contenedor necesita para ejecutarse. Una imagen de Docker se puede compartir y transportar; por lo tanto, se puede implementar la misma imagen en varias ubicaciones a la vez, como un archivo binario de software.Puede almacenar imágenes en registros para realizar un seguimiento de arquitecturas de software complejas, proyectos, segmentos de negocio y accesos a grupos de usuarios. Por ejemplo, el registro público Docker Hub contiene imágenes como sistemas operativos, marcos de lenguajes de programación, bases de datos y editores de código(Imagen de Docker y Contenedor: Diferencia Entre Tecnologías de Implementación de Aplicaciones - AWS, n.d.). 
+Postgres es una de las principales bases de datos relacionales multimodelo disponibles actualmente. Está diseñada para impulsar aplicaciones de bases de datos, que proporcionan datos importantes directamente a los usuarios finales o a través de otra aplicación mediante API. La estructura relacional de objetos y la concurrencia de Postgres son ventajas sobre alternativas como MySQL. Es altamente escalable y admite consultas SQL complejas basadas en estándares. La Imagen Oficial de Docker (DOI) de Postgres te permite crear un contenedor de Postgres adaptado específicamente a tu aplicación. Esta imagen también gestiona muchas tareas de configuración básicas (Cómo Usar La Imagen Oficial de Docker de Postgres | Docker, n.d.).
 
 
-<img src="./docker-img/imagen.png" alt="drawing0" width="500"/>
+<img src="./volumenes/postgres.png" alt="drawing0" width="500"/>
 
 ## 4. Conocimientos previos.
    
@@ -139,22 +146,19 @@ Figura 8-10 Verificacion de la base de datos y registros.
 <img src="./volumenes/pa10.PNG" alt="drawing0" width="500"/>
 
 ## 9. Resultados esperados:
+
+Al finalizar la práctica, se logró cumplir exitosamente cada uno de los objetivos planteados en el procedimiento. En primer lugar, se realizó el despliegue correcto de los contenedores Docker ejecutando la base de datos PostgreSQL, utilizando la imagen de postgres. Se utilizaron dos enfoques: uno sin volumen y otro con volumen persistente. En la primera parte, se comprobó que los datos no se conservaron al eliminar el contenedor server_db1. Esto validó el comportamiento volátil del almacenamiento interno del contenedor.
+
+En la segunda parte, se creó un volumen llamado pgdata y se asoció al contenedor server_db2. Luego de insertar datos en la base de datos test, se detuvo y eliminó el contenedor. Al recrearlo utilizando el mismo volumen, se verificó exitosamente que los datos persistieron, incluyendo la base de datos y los registros en la tabla customer. Durante el proceso se aplicaron de manera adecuada los comandos ``docker run``, ``docker volume create``, ``docker stop``, ``docker rm``.
+
+Todo el desarrollo de la práctica fue documentado con capturas de pantalla que evidencian el comportamiento esperado de PostgreSQL con y sin volúmenes, el uso correcto de los comandos Docker. Demostrando una comprensión sólida de los conceptos de persistencia de datos, virtualización y manejo de contenedores Docker, alcanzando satisfactoriamente los objetivos de aprendizaje propuestos.
     
-Al finalizar la práctica, se logró cumplir exitosamente cada uno de los objetivos planteados en el procedimiento. En primer lugar, se realizó el despliegue correcto de los contenedores Docker ejecutando el servidor web Nginx, utilizando la imagen oficial disponible en Docker Hub. Cada contenedor fue vinculado a un puerto diferente (8089 y 8090), permitiendo el acceso independiente desde el navegador.
-
-Cada servidor web mostró una página HTML distinta, cumpliendo con la guía. El primer contenedor desplegó una página con información institucional, mientras que el segundo mostró una página personalizada con datos del estudiante. Para lograr esto, se utilizaron comandos como docker ``cp`` para transferir los archivos HTML al interior de los contenedores.
-
-Durante el proceso se emplearon de manera adecuada los comandos ``docker run``, ``docker cp``, ``docker stop``, ``docker start``. Además, se aplicó correctamente el mapeo de puertos con la opción ``-p``, y se trabajó en modo desatendido con ``-d`` para mantener los servicios corriendo en segundo plano.
-
-Todo el desarrollo de la práctica fue documentado con capturas de pantalla que evidencian el funcionamiento de los servidores web, el uso correcto de los comandos Docker y la visualización del contenido personalizado desde el navegador. Esto demuestra una comprensión sólida de los conceptos de virtualización, contenedores y servicios web, alcanzando satisfactoriamente los objetivos de aprendizaje propuestos.
-
-<img src="./docker-img/alex.PNG" alt="drawing0" width="500"/>
-
-<img src="./docker-img/inst.PNG" alt="drawing0" width="500"/>
+<img src="./volumenes/pa11.PNG" alt="drawing0" width="500"/>
 
 
 ## 10. Bibliografía
     
-- Imagen de Docker y contenedor: diferencia entre tecnologías de implementación de aplicaciones - AWS. (n.d.). Retrieved April 10, 2025, from https://aws.amazon.com/es/compare/the-difference-between-docker-images-and-containers/
-- ¿Qué es un contenedor? | Docker. (n.d.). Retrieved April 10, 2025, from https://www.docker.com/resources/what-container/
+- Cómo usar la imagen oficial de Docker de Postgres | Docker. (n.d.). Retrieved April 17, 2025, from https://www.docker.com/blog/how-to-use-the-postgres-docker-official-image/
+  
+- Volúmenes | Documentación de Docker. (n.d.). Retrieved April 17, 2025, from https://docs-docker-com.translate.goog/engine/storage/volumes/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc
 
